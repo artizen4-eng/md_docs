@@ -15,7 +15,7 @@ interface ConverterStore extends ConverterState {
 
 export const useConverterStore = create<ConverterStore>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       currentPreset: defaultPreset,
       customPresets: [],
       inputMarkdown: '',

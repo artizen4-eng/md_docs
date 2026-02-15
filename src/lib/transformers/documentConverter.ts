@@ -116,7 +116,7 @@ function cleanupMarkdown(markdown: string): string {
   result = result.replace(/^\s+|\s+$/gm, '');
 
   // 문장 끝 마침표 뒤에만 줄바꿈 (번호, 계위 제외)
-  result = result.replace(/\./g, (match, offset, str) => {
+  result = result.replace(/\./g, (_match, offset, str) => {
     // 앞 문자가 숫자면 번호니까 줄바꿈 안 함 (예: "1.")
     if (offset > 0 && /\d/.test(str[offset - 1])) {
       return '.';
