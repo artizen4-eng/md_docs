@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { ConverterState, ConverterPreset } from '@/types';
+import type { ConverterState, ConverterPreset } from '@/types';
 import { defaultPreset } from '@/lib/presets';
 
 interface ConverterStore extends ConverterState {

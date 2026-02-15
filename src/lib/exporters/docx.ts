@@ -1,4 +1,4 @@
-import { ConverterPreset } from '@/types';
+import type { ConverterPreset } from '@/types';
 
 export async function exportToDocx(
   content: string,

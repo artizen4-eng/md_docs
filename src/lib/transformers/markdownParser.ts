@@ -6,31 +6,29 @@ export interface ParsedMarkdown {
   codeBlocks: string[];
 }
 
-export function parseMarkdown(markdown: string): ParsedMarkdown {
+export async function parseMarkdown(markdown: string): Promise<ParsedMarkdown> {
   const headings: Array<{ level: number; text: string }> = [];
   const codeBlocks: string[] = [];
 
-  // 커스텀 렌더러로 헤딩 추출
-  const renderer = new marked.Renderer();
-  const originalHeading = renderer.heading.bind(renderer);
-  renderer.heading = (text, level, raw) => {
-    headings.push({ level, text: raw });
-    return originalHeading(text, level, raw);
-  };
+  // 마크다운에서 헤딩과 코드블록 추출
+  const headingMatches = markdown.matchAll(/^#{1,3}\s+(.+)$/gm);
+  for (const match of headingMatches) {
+    const level = match[0].match(/^#/g)?.length || 1;
+    headings.push({ level, text: match[1] });
+  }
 
-  const originalCode = renderer.code.bind(renderer);
-  renderer.code = (code, language) => {
-    codeBlocks.push(code);
-    return originalCode(code, language);
-  };
+  const codeMatches = markdown.matchAll(/```[\s\S]*?```/g);
+  for (const match of codeMatches) {
+    codeBlocks.push(match[0].replace(/```\w*\n?/g, '').replace(/```$/g, ''));
+  }
 
+  // HTML로 변환
   marked.setOptions({
-    renderer,
     breaks: true,
     gfm: true,
   });
 
-  const html = marked(markdown);
+  const html = await marked(markdown);
 
   return { html, headings, codeBlocks };
 }

@@ -1,4 +1,4 @@
-import { ConverterPreset } from '@/types';
+import type { ConverterPreset } from '@/types';
 
 export function convertDocument(
   markdown: string,
@@ -33,15 +33,15 @@ export function convertDocument(
 function convertHeadings(markdown: string, preset: ConverterPreset): string {
   // 헤딩 마크 제거하고 공백 정리
   return markdown
-    .replace(/^###\s+(.+)$/gm, (match, text) => {
+    .replace(/^###\s+(.+)$/gm, (_match, text) => {
       const spacing = '\n'.repeat(Math.ceil((preset.h3.spacingAfter || 12) / 6));
       return `${text}${spacing}`;
     })
-    .replace(/^##\s+(.+)$/gm, (match, text) => {
+    .replace(/^##\s+(.+)$/gm, (_match, text) => {
       const spacing = '\n'.repeat(Math.ceil((preset.h2.spacingAfter || 18) / 6));
       return `${text}${spacing}`;
     })
-    .replace(/^#\s+(.+)$/gm, (match, text) => {
+    .replace(/^#\s+(.+)$/gm, (_match, text) => {
       const spacing = '\n'.repeat(Math.ceil((preset.h1.spacingAfter || 24) / 6));
       return `${text}${spacing}`;
     });
@@ -75,7 +75,7 @@ function convertCode(markdown: string, preset: ConverterPreset): string {
   return result;
 }
 
-function convertBlockquote(markdown: string, preset: ConverterPreset): string {
+function convertBlockquote(markdown: string, _preset: ConverterPreset): string {
   const prefix = '│ ';
   return markdown.replace(/^>\s+(.+)$/gm, `${prefix}$1`);
 }
@@ -95,7 +95,7 @@ function convertLists(markdown: string, preset: ConverterPreset): string {
   return result;
 }
 
-function convertTable(markdown: string, preset: ConverterPreset): string {
+function convertTable(markdown: string, _preset: ConverterPreset): string {
   // 간단한 테이블 변환 (구분선 제거)
   return markdown.replace(/^\|[-:|\s]+\|$/gm, '');
 }
