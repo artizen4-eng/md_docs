@@ -1,11 +1,14 @@
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { Toolbar } from './components/Toolbar';
+import { SettingsPanel } from './components/SettingsPanel';
 import { Settings } from 'lucide-react';
 import { useConverter } from './hooks/useConverter';
+import { useState } from 'react';
 
 function App() {
   useConverter();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -16,14 +19,17 @@ function App() {
               📝 Markdown → 문서 변환기
             </h1>
           </div>
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
             <Settings size={20} className="text-gray-600" />
           </button>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-240px)]">
           <div className="bg-white rounded-xl shadow-sm p-6">
             <Editor />
           </div>
@@ -36,6 +42,8 @@ function App() {
           <Toolbar />
         </div>
       </main>
+
+      <SettingsPanel isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
     </div>
   );
 }

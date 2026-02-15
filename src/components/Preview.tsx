@@ -1,7 +1,7 @@
 import { useConverterStore } from '@/store/converterStore';
 
 export function Preview() {
-  const { outputDocument } = useConverterStore();
+  const { outputDocument, setOutputDocument } = useConverterStore();
 
   return (
     <div className="flex flex-col h-full">
@@ -11,14 +11,13 @@ export function Preview() {
           {outputDocument.length} 자
         </span>
       </div>
-      <div
-        className="flex-1 w-full p-4 border border-gray-300 rounded-lg bg-white overflow-auto whitespace-pre-wrap text-sm"
+      <textarea
+        className="flex-1 w-full p-4 border border-gray-300 rounded-lg bg-white overflow-auto whitespace-pre-wrap text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
         data-testid="document-preview"
-      >
-        {outputDocument || (
-          <span className="text-gray-400">변환된 문서가 여기에 표시됩니다...</span>
-        )}
-      </div>
+        value={outputDocument}
+        onChange={(e) => setOutputDocument(e.target.value)}
+        placeholder="변환된 문서가 여기에 표시됩니다..."
+      />
     </div>
   );
 }

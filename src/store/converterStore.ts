@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ConverterState, ConverterPreset } from '@/types';
-import { defaultPreset } from '@/lib/presets';
+import { defaultPreset, builtInPresets } from '@/lib/presets';
 
 interface ConverterStore extends ConverterState {
   setInputMarkdown: (markdown: string) => void;
@@ -15,7 +15,7 @@ interface ConverterStore extends ConverterState {
 
 export const useConverterStore = create<ConverterStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       currentPreset: defaultPreset,
       customPresets: [],
       inputMarkdown: '',
@@ -56,6 +56,16 @@ export const useConverterStore = create<ConverterStore>()(
         customPresets: state.customPresets,
         currentPresetId: state.currentPreset.id,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        // currentPresetId로부터 전체 프리셋 객체 복원
+        const presetId = (state as any).currentPresetId;
+        const allPresets = [...builtInPresets, ...(state.customPresets || [])];
+        const foundPreset = allPresets.find((p: ConverterPreset) => p.id === presetId);
+        if (foundPreset) {
+          (state as any).currentPreset = foundPreset;
+        }
+      },
     }
   )
 );

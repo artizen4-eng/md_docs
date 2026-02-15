@@ -49,9 +49,9 @@ function convertHeadings(markdown: string, preset: ConverterPreset): string {
 
 function convertBoldItalic(markdown: string): string {
   return markdown
-    .replace(/\*\*\*(.+?)\*\*\*/g, '<b><i>$1</i></b>')
-    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
-    .replace(/\*(.+?)\*/g, '<i>$1</i>');
+    .replace(/\*\*\*(.+?)\*\*\*/g, '$1')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1');
 }
 
 function convertCode(markdown: string, preset: ConverterPreset): string {
@@ -96,13 +96,41 @@ function convertLists(markdown: string, preset: ConverterPreset): string {
 }
 
 function convertTable(markdown: string, _preset: ConverterPreset): string {
-  // 간단한 테이블 변환 (구분선 제거)
-  return markdown.replace(/^\|[-:|\s]+\|$/gm, '');
+  // 테이블 구분선 제거
+  let result = markdown.replace(/^\|[-:|\s]+\|$/gm, '');
+
+  // 구분선 --- 또는 -- 사이에 줄바꿈
+  result = result.replace(/^-{3,}\s*$/gm, '\n');
+  result = result.replace(/^--\s*$/gm, '\n');
+
+  return result;
 }
 
 function cleanupMarkdown(markdown: string): string {
-  return markdown
-    .replace(/\n{3,}/g, '\n\n') // 여러 빈줄을 두 줄로
-    .replace(/^\s+|\s+$/gm, '') // 앞뒤 공백 제거
-    .trim();
+  let result = markdown;
+
+  // 여러 빈줄을 두 줄로 정리
+  result = result.replace(/\n{3,}/g, '\n\n');
+
+  // 앞뒤 공백 제거
+  result = result.replace(/^\s+|\s+$/gm, '');
+
+  // 문장 끝 마침표 뒤에만 줄바꿈 (번호, 계위 제외)
+  result = result.replace(/\./g, (match, offset, str) => {
+    // 앞 문자가 숫자면 번호니까 줄바꿈 안 함 (예: "1.")
+    if (offset > 0 && /\d/.test(str[offset - 1])) {
+      return '.';
+    }
+    // 앞앞이 번호.번호 패턴이면 줄바꿈 안 함 (예: "1.1.")
+    const prefix = str.substring(Math.max(0, offset - 10), offset);
+    if (/\d\.\d+$/.test(prefix)) {
+      return '.';
+    }
+    return '.\n';
+  });
+
+  // 다시 여러 빈줄 정리
+  result = result.replace(/\n{3,}/g, '\n\n');
+
+  return result.trim();
 }
